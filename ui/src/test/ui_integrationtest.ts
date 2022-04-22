@@ -69,48 +69,60 @@ afterEach(async () => {
 });
 
 
-describe('resnet50', () => {
-  let page: puppeteer.Page;
+let models = ['resnet50'];
+models.forEach((model) => {
+  describe(model, () => {
+    let page: puppeteer.Page;
 
-  beforeAll(async () => {
-    page = await getPage();
-    await page.goto('http://localhost:10000/?testing=1');
-    await waitForPerfettoIdle(page);
-  });
+    beforeAll(async () => {
+      page = await getPage();
+      await page.goto('http://localhost:10000/?testing=1');
+      await waitForPerfettoIdle(page);
+    });
 
-  test('load', async () => {
-    const page = await getPage();
-    const file = await page.waitForSelector('input.trace_file');
-    // const tracePath = getTestTracePath('chrome_rendering_desktop.pftrace'); // ./test/data/chrome_rendering_desktop.pftrace
-    const tracePath = getTestTracePath('sub_ops_with_gpu_forward.pt.trace.json'); // resnet_50
-    assertExists(file).uploadFile(tracePath);
-    await waitForPerfettoIdle(page);
-  });
+    test('load', async () => {
+      const page = await getPage();
+      const file = await page.waitForSelector('input.trace_file');
+      // const tracePath = getTestTracePath('chrome_rendering_desktop.pftrace'); // ./test/data/chrome_rendering_desktop.pftrace
+      // cp /home/dans/cpath/out/resnet50/perfetto/sub_ops_with_gpu_forward.pt.trace.json /home/dans/perfetto/test/data
+      const tracePath = getTestTracePath('sub_ops_with_gpu_forward.pt.trace.json'); // resnet_50
+      assertExists(file).uploadFile(tracePath);
+      await waitForPerfettoIdle(page);
+    });
 
-  test('expand', async () => {
-    const page = await getPage();
-    await page.click('.main-canvas');
-    await page.click('h1[title="Process 4054772"]');
-    await page.click('h1[title="Process 0"]');
-    // await page.evaluate(() => {
-    //   document.querySelector('.scrolling-panel-container')!.scrollTo(0, 400);
+    test('expand', async () => {
+      const page = await getPage();
+      await page.click('.main-canvas');
+      if (model === 'resnet50') {
+        await page.click('h1[title="Process 4054772"]');
+        await page.click('h1[title="Process 0"]');
+      }
+      else if (model === 'rnn') {
+        await page.click('h1[title="Process 206975"]');
+        await page.click('h1[title="Process 0"]');
+        await page.click('h1[title="Process 1"]');
+        await page.click('h1[title="Process 2"]');
+        await page.click('h1[title="Process 3"]');
+      }
+      // await page.evaluate(() => {
+      //   document.querySelector('.scrolling-panel-container')!.scrollTo(0, 400);
+      // });
+      await waitForPerfettoIdle(page);
+    });
+
+    // test('select_slice_with_flows', async () => {
+    //   const page = await getPage();
+    //   const searchInput = '.omnibox input';
+    //   await page.focus(searchInput);
+    //   await page.keyboard.type('GenerateRenderPass');
+    //   await waitForPerfettoIdle(page);
+    //   for (let i = 0; i < 3; i++) {
+    //     await page.keyboard.type('\n');
+    //   }
+    //   await waitForPerfettoIdle(page);
+    //   await page.focus('canvas');
+    //   await page.keyboard.type('f');  // Zoom to selection
+    //   await waitForPerfettoIdle(page);
     // });
-    await waitForPerfettoIdle(page);
   });
-
-  // test('select_slice_with_flows', async () => {
-  //   const page = await getPage();
-  //   const searchInput = '.omnibox input';
-  //   await page.focus(searchInput);
-  //   await page.keyboard.type('GenerateRenderPass');
-  //   await waitForPerfettoIdle(page);
-  //   for (let i = 0; i < 3; i++) {
-  //     await page.keyboard.type('\n');
-  //   }
-  //   await waitForPerfettoIdle(page);
-  //   await page.focus('canvas');
-  //   await page.keyboard.type('f');  // Zoom to selection
-  //   await waitForPerfettoIdle(page);
-  // });
 });
-
