@@ -50,4 +50,4 @@ def main():
 
 if __name__ == '__main__':
   main()
-  print('finished.')
+  print('Finished rendering jinja template for view_screenshots.py')
