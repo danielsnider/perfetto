@@ -35,7 +35,7 @@ const models = files.filter(de => de.isDirectory()).map(de => de.name);
 
 declare var global: {__BROWSER__: puppeteer.Browser;};
 const browser = assertExists(global.__BROWSER__);
-const expectedScreenshotPath = path.join('test', 'data', 'ui-screenshots');
+const expectedScreenshotPath = path.join('test', 'data', 'ui-screenshots', 'traces');
 
 async function getPage(): Promise<puppeteer.Page> {
   const pages = (await browser.pages());
@@ -61,7 +61,7 @@ afterEach(async () => {
 
   // cwd() is set to //out/ui when running tests, just create a subdir in there.
   // The CI picks up this directory and uploads to GCS after every failed run.
-  const tmpDir = path.resolve('./ui-test-artifacts');
+  const tmpDir = path.resolve('./ui-test-artifacts/traces');
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);
   const screenshotName = `ui-${testName}.png`;
   const actualFilename = path.join(tmpDir, screenshotName);

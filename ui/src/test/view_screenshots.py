@@ -1,20 +1,53 @@
+# Usage:
+# python3 ui/src/test/view_screenshots.py
+# then view results here: ui/src/test/view_screenshots.html
+#
+# REPL:
+# ls ui/src/test/* | grep -v html | entr -cr python3 ui/src/test/view_screenshots.py
+
+import os
+from IPython import embed
+import glob
 import jinja2
 
-templateLoader = jinja2.FileSystemLoader( searchpath="/" )
-templateEnv = jinja2.Environment( loader=templateLoader )
+def files_to_metadata(paths):
+  data = []
+  for path in paths:
+    item = {
+      'path': path,
+      'name': os.path.basename(path),
+    }
+    data.append(item)
+  return data
 
-TEMPLATE_FILE = "/home/dans/perfetto/ui/src/test/view_sceenshots.jinja"
-template = templateEnv.get_template( TEMPLATE_FILE )
+def main():
+  template_file = '/home/dans/perfetto/ui/src/test/view_sceenshots.jinja'
+  output_path = '/home/dans/perfetto/ui/src/test/view_screenshots.html'
+  template_loader = jinja2.FileSystemLoader(searchpath='/')
+  template_env = jinja2.Environment(loader=template_loader)
+  template = template_env.get_template(template_file)
 
-# Here we add a new input variable containing a list.
-# Its contents will be expanded in the HTML as a unordered list.
-FAVORITES = [ "chocolates", "lunar eclipses", "rabbits" ]
+  actual_folder = '/home/dans/perfetto/test/data/ui-screenshots/traces'
+  expected_folder = '/home/dans/perfetto/out/ui/ui-test-artifacts/traces'
 
-templateVars = { "title" : "Test Example",
-                 "description" : "A simple inquiry of function.",
-                 "favorites" : FAVORITES
-               }
+  actual_list = list(glob.iglob(f'{actual_folder}/*.png', recursive=True))
+  expected_list = list(glob.iglob(f'{expected_folder}/*.png', recursive=True))
 
-outputText = template.render( templateVars )
+  actual_metadata = files_to_metadata(actual_list)
+  expected_metadata = files_to_metadata(expected_list)
 
-print(outputText)
+  templateVars = { 'title' : 'Screenshots',
+                  'description' : '',
+                  'actual': actual_metadata,
+                  'expected': expected_metadata,
+                }
+
+  rendered_template = template.render(templateVars )
+
+  with open(output_path, 'w') as output_file:
+    output_file.writelines(rendered_template)
+
+
+if __name__ == '__main__':
+  main()
+  print('finished.')

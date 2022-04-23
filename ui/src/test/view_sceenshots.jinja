@@ -4,19 +4,18 @@
   <meta charset="UTF-8" />
 
   <title>{{ title }}</title>
-  <meta name="description" content="{{ description }}" />
 </head>
 
 <body>
 
 <div id="content">
-  <p>Greetings visitor!  These are a list of my favorite things:</p>
+  <h1>{{ title }}</h1>
+  <p>{{ description }}</p>
 
-  <ul>
-  {% for item in favorites %}
-    <li>{{ item }}</li>
+  {% for item in actual %}
+    <h3>{{ item['name'] }}</h3>
+    <img src="{{ item['path'] }}">
   {% endfor %}
-  </ul>
 </div>
 
 </body>
