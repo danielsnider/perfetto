@@ -2,21 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-
   <title>{{ title }}</title>
 </head>
-
 <body>
-
-<div id="content">
-  <h1>{{ title }}</h1>
-  <p>{{ description }}</p>
-
-  {% for item in actual %}
+  <div id="content">
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+{% for item in actual %}
     <h3>{{ item['name'] }}</h3>
     <img src="{{ item['path'] }}">
-  {% endfor %}
-</div>
-
+{% endfor %}
+  </div>
 </body>
 </html>
