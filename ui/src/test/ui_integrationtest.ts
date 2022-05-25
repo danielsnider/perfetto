@@ -104,9 +104,15 @@ models.forEach((model) => {
       test(trace + '_expand', async () => {
         const page = await getPage();
         await page.click('.main-canvas');
+        await waitForPerfettoIdle(page);
+        await new Promise(r => setTimeout(r, 500));
         if (model === 'resnet50') {
-          await page.click('h1[title="Process 4054772"]');
-          await page.click('h1[title="Process 0"]');
+          if (await page.$('h1[title="Process 4054772"]') !== null) {
+            await page.click('h1[title="Process 4054772"]');
+          }
+          if (await page.$('h1[title="Process 0"]') !== null) {
+            await page.click('h1[title="Process 0"]');
+          }
         }
         else if (model === 'rnn') {
           await page.click('h1[title="Process 206975"]');
@@ -118,6 +124,7 @@ models.forEach((model) => {
         // await page.evaluate(() => {
         //   document.querySelector('.scrolling-panel-container')!.scrollTo(0, 400);
         // });
+        await new Promise(r => setTimeout(r, 500));
         await waitForPerfettoIdle(page);
       });
 

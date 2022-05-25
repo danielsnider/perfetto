@@ -27,19 +27,24 @@ def main():
   template_env = jinja2.Environment(loader=template_loader)
   template = template_env.get_template(template_file)
 
-  actual_folder = '/home/dans/perfetto/test/data/ui-screenshots/traces'
-  expected_folder = '/home/dans/perfetto/out/ui/ui-test-artifacts/traces'
+  # actual_folder = '/home/dans/perfetto/test/data/ui-screenshots/traces'
+  # expected_folder = '/home/dans/perfetto/out/ui/ui-test-artifacts/traces'
 
+  # actual_list = list(glob.iglob(f'{actual_folder}/*.png', recursive=True))
+  # expected_list = list(glob.iglob(f'{expected_folder}/*.png', recursive=True))
+
+  # actual_metadata = files_to_metadata(actual_list)
+  # expected_metadata = files_to_metadata(expected_list)
+
+
+  actual_folder = '/home/dans/perfetto/test/data/ui-screenshots/traces/'
   actual_list = list(glob.iglob(f'{actual_folder}/*.png', recursive=True))
-  expected_list = list(glob.iglob(f'{expected_folder}/*.png', recursive=True))
-
+  actual_list = [file for file in actual_list if 'load' not in file]
   actual_metadata = files_to_metadata(actual_list)
-  expected_metadata = files_to_metadata(expected_list)
 
   templateVars = { 'title' : 'Screenshots',
                   'description' : '',
-                  'actual': actual_metadata,
-                  'expected': expected_metadata,
+                  'actual': actual_metadata
                 }
 
   rendered_template = template.render(templateVars )
